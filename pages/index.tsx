@@ -1,8 +1,7 @@
-import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect } from 'react';
 
 const Home = () => {
+  // 1. AccessToken 바로 요청
   const handleLogin = async () => {
     // Google's OAuth 2.0 endpoint for requesting an access token
     var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';

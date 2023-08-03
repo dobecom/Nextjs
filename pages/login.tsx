@@ -8,11 +8,12 @@ const Login = () => {
   //   console.log(authorizationCode)
 
   const requestAPI = async (token: string) => {
-    const res = await axios.post('http://localhost:3301/auth/login', {
+    const res = await axios.post('http://localhost:3333/auth/login', {
       data: {
         access_token: token,
       },
     });
+    console.log(res);
   };
 
   useEffect(() => {
