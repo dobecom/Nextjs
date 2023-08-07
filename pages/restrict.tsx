@@ -9,8 +9,6 @@ const Restrict = () => {
         access_token: token,
       },
     });
-    console.log('-')
-    console.log(res);
   };
 
   useEffect(() => {
