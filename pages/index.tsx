@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import axios from 'axios';
 
 const Home = () => {
   // 1. AccessToken 바로 요청
@@ -35,6 +36,15 @@ const Home = () => {
     form.submit();
   };
 
+  const handleTest = async () => {
+    try {
+      const res = await axios.get('http://localhost:3333/blockchain/contract');
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       <h3>Login</h3>
@@ -45,6 +55,9 @@ const Home = () => {
           width={24}
           height={24}
         />
+      </button>
+      <button type="button" onClick={handleTest}>
+        TEST BUTTON
       </button>
     </div>
   );
