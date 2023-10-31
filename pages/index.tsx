@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 const Home = () => {
   // 1. AccessToken 바로 요청
@@ -45,9 +47,46 @@ const Home = () => {
     }
   };
 
+  const [messages, setMessages] = useState<any>([]);
+  const [socket, setSocket] = useState<Socket>();
+
+  const connectHandle = async () => {
+    try {
+      // socket.io
+      if (socket) {
+        await socket.emit('events', "It's a message from frontend");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const initSocket = async () => {
+    const _socket = await io('http://192.168.10.42:7000/', {
+      withCredentials: true,
+      // transports: ['websocket', 'polling'],
+    });
+    await setSocket(_socket);
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('events', (message) => {
+        return setMessages([...messages, message]);
+      });
+
+      socket.on('connect', () => {
+        console.log('socket connected');
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    initSocket();
+  }, []);
+
   return (
     <div>
-      <h3>Login</h3>
+      <h3>Test Page</h3>
       <button key={'key'} type="button" onClick={handleLogin} value={'value'}>
         <Image
           src={`/icons/ic_logo_google.png`}
@@ -58,6 +97,9 @@ const Home = () => {
       </button>
       <button type="button" onClick={handleTest}>
         TEST BUTTON
+      </button>
+      <button type="button" onClick={connectHandle}>
+        CONNECT SOCKET
       </button>
     </div>
   );
