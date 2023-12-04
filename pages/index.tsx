@@ -40,7 +40,9 @@ const Home = () => {
 
   const handleTest = async () => {
     try {
-      const res = await axios.get('http://localhost:3333/blockchain/contract');
+      // const res = await axios.get('http://localhost:3333/blockchain/contract');
+      console.log('hit test');
+      const res = await axios.get('http://localhost:3100/payment');
       console.log(res);
     } catch (err) {
       console.log(err);
@@ -61,11 +63,20 @@ const Home = () => {
     }
   };
   const initSocket = async () => {
-    const _socket = await io('http://192.168.10.42:7000/', {
-      withCredentials: true,
-      // transports: ['websocket', 'polling'],
-    });
-    await setSocket(_socket);
+    try {
+      const _socket = await io('http://192.168.10.42:7000/', {
+        withCredentials: true,
+        // transports: ['websocket', 'polling'],
+      });
+      if (_socket.connected) {
+        await setSocket(_socket);
+      } else {
+        // not to try to reconnect automatically
+        _socket.close();
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
