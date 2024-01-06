@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 const Home = () => {
   // 1. AccessToken 바로 요청
@@ -39,6 +41,7 @@ const Home = () => {
   const handleTest = async () => {
     try {
       // const res = await axios.get('http://localhost:3333/blockchain/contract');
+
       // const res = await axios.get('https://pfplay-api.app/api/v1/play-list', {
         const res = await axios.get('http://localhost:8080/api/v1/play-list', {
         headers: {
@@ -46,15 +49,63 @@ const Home = () => {
         },
       });
 
+      // console.log('hit test');
+      // const res = await axios.get('http://localhost:3100/payment');
       console.log(res);
     } catch (err) {
       console.log(err);
     }
   };
 
+  const [messages, setMessages] = useState<any>([]);
+  const [socket, setSocket] = useState<Socket>();
+
+  const connectHandle = async () => {
+    try {
+      // socket.io
+      if (socket) {
+        await socket.emit('events', "It's a message from frontend");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const initSocket = async () => {
+    try {
+      const _socket = await io('http://192.168.10.42:7000/', {
+        withCredentials: true,
+        // transports: ['websocket', 'polling'],
+      });
+      if (_socket.connected) {
+        await setSocket(_socket);
+      } else {
+        // not to try to reconnect automatically
+        _socket.close();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('events', (message) => {
+        return setMessages([...messages, message]);
+      });
+
+      socket.on('connect', () => {
+        console.log('socket connected');
+      });
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    initSocket();
+  }, []);
+
   return (
     <div>
-      <h3>Login</h3>
+      <h3>Test Page</h3>
       <button key={'key'} type="button" onClick={handleLogin} value={'value'}>
         <Image
           src={`/icons/ic_logo_google.png`}
@@ -65,6 +116,9 @@ const Home = () => {
       </button>
       <button type="button" onClick={handleTest}>
         TEST BUTTON
+      </button>
+      <button type="button" onClick={connectHandle}>
+        CONNECT SOCKET
       </button>
     </div>
   );
