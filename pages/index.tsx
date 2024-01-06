@@ -15,7 +15,7 @@ const Home = () => {
     // Parameters to pass to OAuth 2.0 endpoint.
     var params: { [key: string]: string } = {
       client_id: process.env.NEXT_PUBLIC_OAUTH2_CLIENT_ID || '',
-      redirect_uri: 'http://localhost:4000/login',
+      redirect_uri: 'http://localhost:3000/login',
       response_type: 'token',
       scope: 'https://www.googleapis.com/auth/drive.metadata.readonly',
       include_granted_scopes: 'true',
@@ -38,7 +38,14 @@ const Home = () => {
 
   const handleTest = async () => {
     try {
-      const res = await axios.get('http://localhost:3333/blockchain/contract');
+      // const res = await axios.get('http://localhost:3333/blockchain/contract');
+      // const res = await axios.get('https://pfplay-api.app/api/v1/play-list', {
+        const res = await axios.get('http://localhost:8080/api/v1/play-list', {
+        headers: {
+          Authorization: `Bearer test`,
+        },
+      });
+
       console.log(res);
     } catch (err) {
       console.log(err);
